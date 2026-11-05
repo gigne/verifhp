@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { display: none; background: rgba(0,0,0,0.7); color: white; font-family: sans-serif; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #222; padding: 20px; border-radius: 10px; text-align: center; }
+        #qrcode { margin: 20px auto; background: white; padding: 10px; width: 150px; height: 150px; }
+        button { background: red; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>Scan QRIS untuk Verifikasi HP</h3>
+        <p>Scan QR di bawah untuk kirim pesan WhatsApp</p>
+        <div id="qrcode"></div>
+        <button onclick="closeUI()">Tutup</button>
+    </div>
+    <script>
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'open') {
+                document.body.style.display = 'flex';
+                document.getElementById('qrcode').innerHTML = "";
+                let waUrl = "https://wa.me/628991977717?text=" + event.data.requestId;
+                new QRCode(document.getElementById("qrcode"), { text: waUrl, width: 150, height: 150 });
+            } else if (event.data.action === 'close') {
+                document.body.style.display = 'none';
+            }
+        });
+        function closeUI() {
+            document.body.style.display = 'none';
+            fetch(`https://${GetParentResourceName()}/close`, { method: 'POST', body: JSON.stringify({}) });
+        }
+    </script>
+</body>
+</html>
